@@ -1,16 +1,18 @@
 # Jefe
 
-Jefe is a safe sandbox for running third-party javascript on the server.
+Jefe is a sandbox for running third-party javascript on the server.
 
 ![logo](http://github.com/fictorial/jefe/raw/master/jefe.png)
 
 ## Principles
 
-1. Third-party code must have no access to global or local scope by default;
-   it is only *able* to see and touch that which the application wants to 
-   allow it to see and touch.
-2. Third-party code must finish executing within a given (wall-clock) time limit.
-3. Third-party code must only use a limited amount of RAM.
+1. Third-party code may only see and touch that which you allow it to see and touch.
+2. Third-party code may only use a finite amount of time to run.
+3. Third-party code may only use a limited amount of RAM.
+
+If any of the above principles are violated, the code is killed.
+
+4. You mess with el Jefe and el Jefe messes with you.
 
 ## How does it work?
 
