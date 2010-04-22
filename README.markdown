@@ -2,7 +2,7 @@
 
 Jefe is a safe sandbox for running third-party javascript on the server.
 
-![logo](http://github.com/fictorial/jefe/blob/master/jefe.png)
+![logo](http://github.com/fictorial/jefe/raw/master/jefe.png)
 
 ## Principles
 
