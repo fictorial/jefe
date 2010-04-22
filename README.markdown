@@ -12,8 +12,6 @@ You mess with Jefe and Jefe messes with you.
 2. Third-party code may only use a finite amount of time to run.
 3. Third-party code may only use a limited amount of RAM.
 
-If any of the above principles are violated, the code is killed.
-
 ## How does it work?
 
 Node.js has all the pieces of the puzzle.  Jefe just puts them together.
