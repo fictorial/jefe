@@ -63,35 +63,50 @@ and responses are JSON objects delimited by CRLF ("\r\n").
 
 Requests include:
 
-* specifying third-party code with an associated name ("SendCode")
+* specifying third-party code with an associated name ("AddCode")
 * executing the code with an optional sandbox environment ("ExecCode")
+* removing the third-party code associated with a name ("RemoveCode")
 
-#### SendCode Request
+#### AddCode Request
 
 The application sends the third-party code to the child processes via Jefe.
-When the child receives the SendCode request, it creates a `Script` with the
-given code. If there are any syntax problems, the child returns an error.
-Else, the child associates the `Script` with the given script name.  Reusing an
-existing name overwrites any current `Script` associated with the given name.
+When the child receives the AddCode request, it creates a `Script` with the
+given code. The child associates the `Script` with the given script name.
+Reusing an existing name overwrites any current `Script` associated with the
+given name.
 
 Jefe sends:
 
-    { "cmd":"SendCode"
+    { "cmd":"AddCode"
     , "name":"$someName"
     , "code":"$sourceCode"
     } <CRLF>
 
-When the code has a syntax error, the child responds with:
-
-    { "ok":false
-    , "reason":"SyntaxError"
-    , "line":$lineNumber
-    , "message":"$errorMessage"
-    } <CRLF>
-
-When the input code is valid, the child responds with:
+The child responds with:
 
     { "ok":true } <CRLF>
+
+#### RemoveCode Request
+
+The application no longer needs the given code. The child processes remove
+the code by name.
+
+Jefe sends:
+
+    { "cmd":"RemoveCode"
+    , "name":"$someName"
+    } <CRLF>
+
+The child responds with:
+
+    { "ok":true } <CRLF>
+
+When the child fails to find a script associated with the given name, it
+responds with:
+
+    { "ok":false
+    , "reason":"no such script"
+    } <CRLF>
 
 #### ExecCode Request
 
@@ -107,7 +122,7 @@ Jefe sends:
     } <CRLF>
 
 When the child fails to find a script associated with the given name, it
-returns:
+responds with:
 
     { "ok":false
     , "reason":"no such script"
