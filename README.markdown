@@ -2,6 +2,8 @@
 
 Jefe is a sandbox for running third-party javascript on the server.
 
+You mess with Jefe and Jefe messes with you.
+
 ![logo](http://github.com/fictorial/jefe/raw/master/jefe.png)
 
 ## Principles
@@ -11,8 +13,6 @@ Jefe is a sandbox for running third-party javascript on the server.
 3. Third-party code may only use a limited amount of RAM.
 
 If any of the above principles are violated, the code is killed.
-
-4. You mess with el Jefe and el Jefe messes with you.
 
 ## How does it work?
 
