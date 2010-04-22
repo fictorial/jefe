@@ -21,11 +21,11 @@ Node.js has all the pieces of the puzzle.  Jefe just puts them together.
 ### Child Processes
 
 Node.js is single-threaded. If Jefe simply ran the third-party code in situ, it
-would not be possible to stop long-running code from running.  Indeed, rogue
-code could easily make the application unresponsive with only `while (true)
-{}`.  Thus, Jefe runs third-party code in a spawned *child process*.  Jefe
-monitors the child, and if the child misbehaves, Jefe *kills* it, and respawns
-a new child for future requests.  
+would not be possible to stop long-running code.  Indeed, rogue code could
+easily make the application unresponsive with only `while (true) {}`.  Thus,
+Jefe runs third-party code in a spawned *child process*.  Jefe monitors the
+child, and if the child misbehaves, Jefe *kills* it, and respawns a new child
+for future requests.  
 
 ### Child Process Pool
 
@@ -40,7 +40,7 @@ be available to handle a request, Jefe spawns another child (up to the
 configured maximum) to handle the request.  Should there be no available child
 processes, and the maximum number of child processes have been spawned, the
 request is entered into a FIFO queue.  When a child returns a response,
-a request from is dequeued and sent to the now-available child.
+a request is dequeued and sent to the now-available child.
 
 ### Time Limits
 
@@ -60,7 +60,8 @@ of third-party code.
 ### IPC 
 
 Jefe and the child processes communicate through a pipe.  Jefe sends a request,
-the child handles the request, and the child returns a response to Jefe.  
+the child handles the request, and the child returns a response to Jefe.  Requests
+and responses are JSON objects delimited by CRLF ("\r\n").
 
 Requests include:
 
@@ -119,7 +120,7 @@ returned to Jefe:
 
     { "ok":true
     , "outputSandbox":{...}
-    }
+    } <CRLF>
 
 #### Malformed Requests
 
@@ -129,9 +130,15 @@ If Jefe somehow creates a malformed request (bug), the child returns:
     , "reason":"malformed request"
     } <CRLF>
 
-## About
+## Copyright
 
 © Copyright 2010 Fictorial LLC. All Rights Reserved.
 
-License: MIT
+## License
+
+MIT
+
+## Author
+
+Brian Hammond (brian at fictorial dot com)
 
