@@ -1,6 +1,7 @@
 # Jefe
 
-Jefe is a sandbox for running untrusted third-party javascript from Node.js.
+Jefe is a sandbox for running untrusted Javascript on the server in your
+Node.js application.
 
 You mess with Jefe and Jefe messes with you.
 
@@ -8,9 +9,10 @@ You mess with Jefe and Jefe messes with you.
 
 ## Principles
 
-1. Third-party code may only see and touch that which you allows it to see and touch.
-2. Third-party code may only use a finite amount of time to run.
-3. Third-party code may only use a limited amount of RAM.
+1. An untrusted script may only see and touch that which the application 
+   allows it to see and touch.
+2. An untrusted script may only use a finite amount of time to run.
+3. An untrusted script may only use a limited amount of RAM.
 
 ## How does it work?
 
@@ -18,19 +20,18 @@ Node.js has all the pieces of the puzzle.  Jefe just puts them together.
 
 ### Child Processes
 
-Node.js is single-threaded. If Jefe simply ran the third-party code in situ, it
-would not be possible to stop long-running code.  Indeed, rogue code could
-easily make the application unresponsive with only `while (true) {}`.  Thus,
-Jefe runs third-party code in a spawned *child process*.  Jefe monitors the
-child, and if the child misbehaves, Jefe *kills* it, and respawns a new child
-for future requests.  
+Node.js is single-threaded. If Jefe simply ran untrusted scripts in situ, it
+would not be possible to stop or kill a "long-running" script.  Indeed,
+a script could easily make the host application unresponsive with only `while
+(true) {}`, a form of "denial of service".  
 
-### Child Process Pool
+Thus, Jefe runs untrusted scripts in spawned *child processes*.  Jefe monitors
+each child, and if the child misbehaves, Jefe *kills* it, and notifies the
+application which may take appropriate action (sanctions, boycotts, etc.).
 
-In fact, Jefe manages a *pool* of child processes to run third-party code. The
+In fact, Jefe manages a *pool* of child processes to run untrusted scripts. The
 pool can be configured to use a minimum and maximum number of child processes.
-Also, each child can be recycled/restarted after N requests have been
-handled.  
+Also, each child process can be restarted after N requests have been handled.  
 
 To execute a request, Jefe uses any available child in the pool and sends it
 the request, and then waits for the response (non-blocking).  Should no child
@@ -40,20 +41,36 @@ processes, and the maximum number of child processes have been spawned, the
 request is entered into a FIFO queue.  When a child returns a response,
 a request is dequeued and sent to the now-available child.
 
+### Sandboxing
+
+An untrusted script may only see and touch that which the application allows it
+to see and touch.
+
+Untrusted scripts are run in a "sandbox" with no access (read nor write) to
+either local or global scope.  The application can inject variables into the
+sandbox which are then visible to an untrusted script.  The untrusted script
+may only modify that which is visible in the sandbox.  By default, nothing is
+visible.
+
+In V8 terminology, each untrusted script is run in a new Javascript "context".
+
 ### Time Limits
 
-Monitoring wall-clock time is performed via `setTimeout`.  A timer is started
-when the child begins a run of third-party code.  If the child returns
-a response Jefe before the timer fires, the timer is cleared.  If the timer
-fires, the child is killed.
+An untrusted script may only use a finite amount of (wall-clock) time to run.
+
+Monitoring time is performed via `setTimeout`.  A timer is started when the
+child begins a run of untrusted scripts.  If the child returns a response Jefe
+before the timer fires, the timer is cleared.  If the timer fires, the child is
+killed.
 
 ### Memory Limits
 
-Before each run of third-party code, the child's memory usage is determined for
-to set a baseline measurement.  As the child runs the code, Jefe periodically
-checks the memory usage of the child.  If the memory footprint becomes too
-large, the child is killed.  FYI, the child collects garbage after each run
-of third-party code.
+An untrusted script may only use a limited amount of RAM.
+
+Before each run of an untrusted script, the child's memory usage is determined
+for to set a baseline measurement.  As the child runs the script, Jefe
+periodically checks the memory usage of the child.  If the memory footprint
+becomes too large, the child is killed. 
 
 ### IPC 
 
@@ -63,84 +80,79 @@ and responses are JSON objects delimited by CRLF ("\r\n").
 
 Requests include:
 
-* specifying third-party code with an associated name ("AddCode")
-* executing the code with an optional sandbox environment ("ExecCode")
-* removing the third-party code associated with a name ("RemoveCode")
+* specifying untrusted scripts with an associated name ("AddScript")
+* executing the scripts with an optional sandbox environment ("RunScript")
+* removing the untrusted scripts associated with a name ("RemoveScript")
 
-#### AddCode Request
+#### AddScript Request
 
-The application sends the third-party code to the child processes via Jefe.
-When the child receives the AddCode request, it creates a `Script` with the
-given code. The child associates the `Script` with the given script name.
+The application sends the untrusted scripts to the child processes via Jefe.
+When the child receives the AddScript request, it creates a `Script` with the
+given scripts. The child associates the `Script` with the given script name.
 Reusing an existing name overwrites any current `Script` associated with the
 given name.
 
 Jefe sends:
 
-    { "cmd":"AddCode"
+    { "cmd":"AddScript"
     , "name":"$someName"
-    , "code":"$sourceCode"
+    , "script":"$sourceCode"
     } <CRLF>
 
-The child responds with:
+#### RemoveScript Request
 
-    { "ok":true } <CRLF>
-
-#### RemoveCode Request
-
-The application no longer needs the given code. The child processes remove
-the code by name.
+The application no longer needs the given scripts. The child processes remove
+the scripts by name.
 
 Jefe sends:
 
-    { "cmd":"RemoveCode"
+    { "cmd":"RemoveScript"
     , "name":"$someName"
     } <CRLF>
 
-The child responds with:
+#### RunScript Request
 
-    { "ok":true } <CRLF>
-
-When the child fails to find a script associated with the given name, it
-responds with:
-
-    { "ok":false
-    , "reason":"no such script"
-    } <CRLF>
-
-#### ExecCode Request
-
-When the child receives the ExecCode request, it finds the `Script` by name,
+When the child receives the RunScript request, it finds the `Script` by name,
 and runs the script with the given sandbox object, and finally returns the
-sandbox object as potentially modified by the code during the run.
+sandbox object as potentially modified by the scripts during the run.
 
 Jefe sends:
 
-    { "cmd":"ExecCode"
+    { "cmd":"RunScript"
     , "name":"$someName"
     , "inputSandbox":{...}
     } <CRLF>
 
-When the child fails to find a script associated with the given name, it
-responds with:
-
-    { "ok":false
-    , "reason":"no such script"
-    } <CRLF>
-
-When the code finishes running, the (potentially updated) sandbox object is
-returned to Jefe:
+When the scripts finishes running successfully, the (potentially updated) sandbox
+object is returned to Jefe:
 
     { "ok":true
-    , "outputSandbox":{...}
+    , "response":{...}
     } <CRLF>
 
-#### Malformed Requests
+When the scripts throws, the child responds with:
 
-If Jefe somehow creates a malformed request (bug), the child returns:
+    { "ok":true
+    , "response":{"exception":{...}}
+    } <CRLF>
+
+Note: `ok:true` denotes that the child was able to run the scripts, not that the
+scripts ran without (its own definition of) error.
+
+#### Sanity Checks
+
+If Jefe somehow creates a malformed request (bug), the child prints to stderr and quits.
 
     { "ok":false
     , "reason":"malformed request"
+    } <CRLF>
+
+Each child has a maximum input size for a sanity check.  This is by default 5MiB.
+Set the environment variable `JEFE_MAX_INPUT_SIZE` to alter this, or clone and update
+the scripts. If a child receives too much data, it prints to stderr and quits.
+
+    { "ok":false
+    , "reason":"input too large
     } <CRLF>
 
 ## Copyright
