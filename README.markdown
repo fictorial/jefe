@@ -14,6 +14,22 @@ You mess with Jefe and Jefe messes with you.
 2. An untrusted script may only use a finite amount of time to run.
 3. An untrusted script may only use a limited amount of RAM.
 
+## How do I use it?
+
+    var sys    = require("sys"),
+        jefe   = new require("../lib/jefe"),  // change me as needed
+        elJefe = new jefe.Jefe();
+    
+    elJefe.addScript("circumference", "C = 2 * Math.PI * R");
+    
+    elJefe.runScript("circumference", { R:10 }, function (error, response) {
+      if (error) throw new Error(error); 
+      sys.puts("The circumference of a circle with radius 10 is: " + response.sandbox.C);
+    });
+
+    // outputs (logging info for now) and:
+    // The circumference of a circle with radius 10 is: 62.83185307179586
+
 ## How does it work?
 
 Node.js has all the pieces of the puzzle.  Jefe just puts them together.
@@ -154,6 +170,10 @@ the scripts. If a child receives too much data, it prints to stderr and quits.
     { "ok":false
     , "reason":"input too large
     } <CRLF>
+
+## Status
+
+*Alpha*. Basic test works. Testing of kill-switch (time, memory) required.
 
 ## Copyright
 
