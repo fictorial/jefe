@@ -30,6 +30,7 @@ try {
   sys.puts("It's OK. We were expecting that.");
 }
 
+
 // BTW, adding a script with the same name will replace any existing script with
 // that name in Jefe.
 
@@ -45,25 +46,21 @@ try {
 
 var nDone = 0;
 for (var i = 0; i < 10; ++i) {
-  elJefe.runScript(scriptName, { R:i+1 }, function (error, response) {
-    // This will only throw when there's an error *with Jefe* not when the script throws.
-    // If the script throws, that's up to the caller to check.  The response.exception
-    // will be set in this case.  If the code does not throw, the response.sandbox will
-    // contain the state of the "globals" when the script returns.
+  elJefe.runScript(scriptName, { R:i+1 }, function (error, updatedSandbox) {
+
+    // If there's a problem with Jefe (bug; someone else killed the child
+    // process from the outside; etc.) then `error` will be a message
+    // indicating what went wrong.  If `error == jefe.ERR_TOO_MUCH_TIME` then
+    // the script took too long to finish.  If `error == jefe.ERR_TOO_MUCH_MEMORY` 
+    // then the script used too much memory.  Otherwise, if `error` is non-null 
+    // then the script threw an exception.  If `error === null` then the 
+    // `updatedSandbox` contains the contents of the sandbox at script end.
     
-    // TODO maybe we should change this. It's a little awkward.
+    if (error) throw new Error(error); 
 
-    if (error) 
-      throw new Error(error); 
+    sys.puts("The circumference of a circle with radius " + updatedSandbox.R + " = " + updatedSandbox.C);
 
-    if (response.exception)
-      throw new Error(response.exception);
-
-    sys.puts("The circumference of a circle with radius " + 
-             response.sandbox.R + " = " + response.sandbox.C);
-
-    if (++nDone == 10) 
-      finalize();
+    if (++nDone == 10) finalize();
   });
 }
 
@@ -72,7 +69,8 @@ function finalize() {
 
   var stats = elJefe.getScriptStats(scriptName);
   var meanElapsed = stats.totalRunTime / (stats.runs || 1);
-  sys.puts("mean elapsed time for " + scriptName + " = " + meanElapsed + " ms");
+  sys.puts("mean elapsed time per run of '" + scriptName + "' was " + meanElapsed + " ms");
+  sys.puts("all done!");
 
   process.exit(0);
 }

@@ -13,7 +13,7 @@ use.  The default is 10240 KB (or 10 megabytes).  If a script causes a child to
 use more than this amount of RAM, the child process is killed.
 
 `maxChildMemPercent`: maximum amount of RAM to allow any given script to use as
-a percentage of total system RAM.  The default is 0.15 or 15%.  If a script
+a percentage of total system RAM.  The default is 0 (disabled).  If a script
 causes a child to use more than this percentage of total system RAM the child
 process is killed.
 
@@ -63,17 +63,32 @@ Runs the script and calls back with the result.
 `sandbox` is an optional sandbox environment for the script; an `Object`.
 
 `callback` is a function that is called back when the script has completed
-running in some child process.  The arguments to the callback are `(error,
-response)`.  
+running in some child process.  
+
+The arguments to the callback are `(error, response)`.  
 
 If the child was killed for taking too much time or using too much memory, the
 `error` argument will be an `Error` object a `message` equal to one of the
-`ERR_*` constants of the `jefe` module, else it will be `null`.  
+`ERR_*` constants of the `jefe` module.
 
-If the script was run successfully, the `error` argument will be `null` and
-`response` will be an `Object` representing the response of the script.  When
-the script throws, the `response` will resemble `{ exception: ... }`.  When
-the script does not throw, the `response` will resemble `{ sandbox: {...} }`
-which represents the script-level globals at the end of the script run.
+If the script was run successfully but threw an exception, the `error` argument
+will equal an `Error` object equal to the message of the exception thrown by
+the script, and `response` will equal `null`.
 
-Note that the `sandbox` object argument to `runScript` is never altered.
+If the script was run successfully and did not throw an exception, the `error`
+argument will equal `null`, and `response` will equal the "globals" at the time
+the run of the script ended.  Note that the `sandbox` object argument to
+`runScript` is never altered.
+
+## .getScriptStats(name)
+
+Returns statistics about the given script identified by `name`.  The statistics are
+an represented by an `Object` of the form:
+
+    { runs: 0           // # runs since added
+    , totalRunTime: 0   // total elapsed time across all runs (millis)
+    , killed: 0         // # times this script had to be forcibly killed
+    , killedTime: 0     // # times this script had to be forcibly killed for taking too long
+    , killedMem: 0      // # times this script had to be forcibly killed for using too much memory
+    }
+
