@@ -16,15 +16,17 @@ You mess with Jefe and Jefe messes with you.
 
 ## How do I use it?
 
+See [this example](http://github.com/fictorial/jefe/blob/master/examples/circumference.js) for a documented version.
+
     var sys    = require("sys"),
         jefe   = new require("../lib/jefe"),  // change me as needed
         elJefe = new jefe.Jefe();
     
     elJefe.addScript("circumference", "C = 2 * Math.PI * R");
     
-    elJefe.runScript("circumference", { R:10 }, function (error, response) {
+    elJefe.runScript("circumference", { R:10 }, function (error, updatedSandbox) {
       if (error) throw new Error(error); 
-      sys.puts("The circumference of a circle with radius 10 is: " + response.sandbox.C);
+      sys.puts("The circumference of a circle with radius 10 is: " + updatedSandbox.C);
     });
 
     // outputs (logging info for now) and:
