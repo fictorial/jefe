@@ -54,7 +54,7 @@ Removes a script by name.
 
 `name` is an arbitrary script identifier as previously passed to `addScript`.
 
-## .runScript(name, sandbox, callback)
+## .runScript(name, sandboxIn, callback)
 
 Runs the script and calls back with the result.
 
@@ -65,20 +65,19 @@ Runs the script and calls back with the result.
 `callback` is a function that is called back when the script has completed
 running in some child process.  
 
-The arguments to the callback are `(error, response)`.  
+The arguments to the callback are `(error, sandboxIn, sandboxOut)`.  
 
 If the child was killed for taking too much time or using too much memory, the
-`error` argument will be an `Error` object a `message` equal to one of the
-`ERR_*` constants of the `jefe` module.
+`error` argument will be a `String` message equal to one of the `ERR_*`
+constants of the `jefe` module (e.g. `jefe.ERR_TOO_MUCH_TIME`).
 
 If the script was run successfully but threw an exception, the `error` argument
-will equal an `Error` object equal to the message of the exception thrown by
-the script, and `response` will equal `null`.
+will equal a `String` message equal to the exception thrown by the script.
 
 If the script was run successfully and did not throw an exception, the `error`
-argument will equal `null`, and `response` will equal the "globals" at the time
-the run of the script ended.  Note that the `sandbox` object argument to
-`runScript` is never altered.
+argument will equal `null`, `sandboxIn` will be the original input sandbox
+object, and `sandboxOut` will be the "globals" at the time the run of the
+script ended.  
 
 ## .getScriptStats(name)
 

@@ -46,7 +46,7 @@ try {
 
 var nDone = 0;
 for (var i = 0; i < 10; ++i) {
-  elJefe.runScript(scriptName, { R:i+1 }, function (error, updatedSandbox) {
+  elJefe.runScript(scriptName, { R:i+1 }, function (error, sandboxIn, sandboxOut) {
 
     // If there's a problem with Jefe (bug; someone else killed the child
     // process from the outside; etc.) then `error` will be a message
@@ -54,11 +54,12 @@ for (var i = 0; i < 10; ++i) {
     // the script took too long to finish.  If `error == jefe.ERR_TOO_MUCH_MEMORY` 
     // then the script used too much memory.  Otherwise, if `error` is non-null 
     // then the script threw an exception.  If `error === null` then the 
-    // `updatedSandbox` contains the contents of the sandbox at script end.
+    // `sandboxOut` contains the contents of the sandbox at script end.
     
     if (error) throw new Error(error); 
 
-    sys.puts("The circumference of a circle with radius " + updatedSandbox.R + " = " + updatedSandbox.C);
+    sys.puts("The circumference of a circle with radius " + sandboxIn.R + 
+             " equals " + sandboxOut.C);
 
     if (++nDone == 10) finalize();
   });
