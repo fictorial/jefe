@@ -6,10 +6,14 @@ var
 
 elJefe.addScript(scriptName, "FOOBAR=1");
 
-elJefe.runScript(scriptName, { FOOBAR: 2 }, function (error, response) {
-  if (error)  
-    sys.log("[EXAMPLE/SIMPLE] error = " + error);
-  else 
-    sys.log("[EXAMPLE/SIMPLE] response = " + JSON.stringify(response));
+elJefe.runScript(scriptName, { FOOBAR: 2 }, function (error, sandboxIn, sandboxOut) {
+  if (error) {
+    sys.log("error = " + error);
+  } else {
+    sys.log("sandboxIn  = " + JSON.stringify(sandboxIn));
+    sys.log("sandboxOut = " + JSON.stringify(sandboxOut));
+  }
+
+  process.exit(0);
 });
 
