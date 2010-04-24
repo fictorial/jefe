@@ -24,9 +24,9 @@ See [this example](http://github.com/fictorial/jefe/blob/master/examples/circumf
     
     elJefe.addScript("circumference", "C = 2 * Math.PI * R");
     
-    elJefe.runScript("circumference", { R:10 }, function (error, updatedSandbox) {
+    elJefe.runScript("circumference", { R:10 }, function (error, sandboxIn, sandboxOut) {
       if (error) throw new Error(error); 
-      sys.puts("The circumference of a circle with radius 10 is: " + updatedSandbox.C);
+      sys.puts("The circumference of a circle with radius 10 is: " + sandboxOut.C);
     });
 
     // outputs (logging info for now) and:
