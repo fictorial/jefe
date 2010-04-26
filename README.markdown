@@ -97,19 +97,12 @@ the child handles the request, and the child returns a response to Jefe.
 
 See the [IPC Documentation](http://github.com/fictorial/jefe/blob/master/doc/ipc.markdown)
 
-## Status
+## How safe is this?
 
-*beta*. Basic tests work. Testing of kill-switch (time, memory) in progress.
+I personally make no guarantees about the safety of this software.  *Use at your
+own risk.*  I wouldn't use this in production until a proper security audit is
+performed.  
 
-## Copyright
-
-© Copyright 2010 Fictorial LLC. All Rights Reserved.
-
-## License
-
-MIT
-
-## Author
-
-Brian Hammond (brian at fictorial dot com)
+Please poke holes in Jefe, open issues on GitHub if you find a way to break
+this software, offer suggestions for improvement, etc.  Thanks!
 

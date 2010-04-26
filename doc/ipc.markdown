@@ -82,6 +82,3 @@ the scripts. If a child receives too much data, it prints to stderr and quits.
     , "reason":"input too large
     } <CRLF>
 
-## Copyright
-
-© Copyright 2010 Fictorial LLC. All Rights Reserved.
