@@ -93,14 +93,7 @@ becomes too large, the child is killed.
 ### IPC 
 
 Jefe and the child processes communicate through a pipe.  Jefe sends a request,
-the child handles the request, and the child returns a response to Jefe.  Requests
-and responses are JSON objects delimited by CRLF ("\r\n").
-
-Requests include:
-
-* specifying untrusted scripts with an associated name ("AddScript")
-* executing the scripts with an optional sandbox environment ("RunScript")
-* removing the untrusted scripts associated with a name ("RemoveScript")
+the child handles the request, and the child returns a response to Jefe.  
 
 See the [IPC Documentation](http://github.com/fictorial/jefe/blob/master/doc/ipc.markdown)
 

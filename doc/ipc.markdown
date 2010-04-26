@@ -6,45 +6,45 @@ and responses are JSON objects delimited by CRLF ("\r\n").
 
 Requests include:
 
-* specifying untrusted scripts with an associated name ("AddScript")
-* executing the scripts with an optional sandbox environment ("RunScript")
-* removing the untrusted scripts associated with a name ("RemoveScript")
+* specifying untrusted scripts with an associated name ("compile")
+* executing the scripts with an optional sandbox environment ("run")
+* removing the untrusted scripts associated with a name ("remove")
 
-#### AddScript Request
+#### compile Request
 
 The application sends the untrusted scripts to the child processes via Jefe.
-When the child receives the AddScript request, it creates a `Script` with the
+When the child receives the compile request, it creates a `Script` with the
 given scripts. The child associates the `Script` with the given script name.
 Reusing an existing name overwrites any current `Script` associated with the
 given name.
 
 Jefe sends:
 
-    { "cmd":"AddScript"
+    { "cmd":"compile"
     , "scriptName":"$someName"
     , "script":"$sourceCode"
     } <CRLF>
 
-#### RemoveScript Request
+#### remove Request
 
 The application no longer needs the given scripts. The child processes remove
 the scripts by name.
 
 Jefe sends:
 
-    { "cmd":"RemoveScript"
+    { "cmd":"remove"
     , "scriptName":"$someName"
     } <CRLF>
 
-#### RunScript Request
+#### run Request
 
-When the child receives the RunScript request, it finds the `Script` by name,
+When the child receives the run request, it finds the `Script` by name,
 and runs the script with the given sandbox object, and finally returns the
 sandbox object as potentially modified by the scripts during the run.
 
 Jefe sends:
 
-    { "cmd":"RunScript"
+    { "cmd":"run"
     , "scriptName":"$someName"
     , "sandbox":{...}
     } <CRLF>
