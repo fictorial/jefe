@@ -1,7 +1,7 @@
 var 
   sys = require("sys"),
   jefe = new require("../lib/jefe"),  // change me as needed
-  elJefe = new jefe.Jefe(),
+  elJefe = new jefe.Jefe({ recycleAfterN: 20 }),
   scriptName = "circumference";
 
 // Create the script once. This will compile it and cache it.  This script will
@@ -44,8 +44,11 @@ try {
 // nothing special; it just sets one or more "globals" (really just set in the
 // sandbox object).
 
-var nDone = 0;
-for (var i = 0; i < 10; ++i) {
+var 
+  nDone = 0,
+  nCalls = 100;
+
+for (var i = 0; i < nCalls; ++i) {
   elJefe.run(scriptName, { R:i+1 }, function (error, sandboxIn, sandboxOut) {
 
     // If there's a problem with Jefe (bug; someone else killed the child
@@ -56,12 +59,12 @@ for (var i = 0; i < 10; ++i) {
     // then the script threw an exception.  If `error === null` then the 
     // `sandboxOut` contains the contents of the sandbox at script end.
     
-    if (error) throw new Error(error); 
+    if (error) 
+      throw new Error("Problem running script: " + error); 
 
-    sys.puts("The circumference of a circle with radius " + sandboxIn.R + 
-             " equals " + sandboxOut.C);
+    sys.puts("The circumference of a circle with radius " + sandboxIn.R + " equals " + sandboxOut.C);
 
-    if (++nDone == 10) finalize();
+    if (++nDone == nCalls) finalize();
   });
 }
 
