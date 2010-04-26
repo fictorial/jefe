@@ -6,6 +6,8 @@ var
 
 elJefe.compile(scriptName, "while (true) {}", { maxTime: 5000 } );
 
+sys.error("this will wait up to 5s ...");
+
 elJefe.run(scriptName, {}, function (error, sandboxIn, sandboxOut) {
   if (error) {
     sys.puts("error = " + error);
