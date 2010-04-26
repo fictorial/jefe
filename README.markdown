@@ -22,14 +22,14 @@ See [this example](http://github.com/fictorial/jefe/blob/master/examples/circumf
         jefe   = new require("../lib/jefe"),  // change me as needed
         elJefe = new jefe.Jefe();
     
-    elJefe.addScript("circumference", "C = 2 * Math.PI * R");
+    elJefe.compile("circumference", "C = 2 * Math.PI * R");
     
-    elJefe.runScript("circumference", { R:10 }, function (error, sandboxIn, sandboxOut) {
+    elJefe.run("circumference", { R:10 }, function (error, sandboxIn, sandboxOut) {
       if (error) throw new Error(error); 
       sys.puts("The circumference of a circle with radius 10 is: " + sandboxOut.C);
+      process.exit(0);
     });
 
-    // outputs (logging info for now) and:
     // The circumference of a circle with radius 10 is: 62.83185307179586
 
 ## How does it work?
@@ -106,7 +106,7 @@ See the [IPC Documentation](http://github.com/fictorial/jefe/blob/master/doc/ipc
 
 ## Status
 
-*Alpha*. Basic test works. Testing of kill-switch (time, memory) required.
+*beta*. Basic tests work. Testing of kill-switch (time, memory) in progress.
 
 ## Copyright
 
