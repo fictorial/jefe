@@ -2,11 +2,13 @@ var
   sys = require("sys"),
   jefe = new require("../lib/jefe"),
   elJefe = new jefe.Jefe(),
-  scriptName = "while forever loop should not run forever"; 
+  scriptName = "script that creates too much memory should be killed";
 
-elJefe.compile(scriptName, "while (true) {}", { maxTime: 5000 } );
+var sourceCode = "A = []; while (true) A.push('a')";
 
-sys.error("this will wait up to 5s before killing the script ...");
+elJefe.compile(scriptName, sourceCode, { maxMem: 10240, maxTime: 0 } );     // KB
+
+sys.error("this will kill the script for using too much memory regardless of how long it takes ...");
 
 elJefe.run(scriptName, {}, function (error, sandboxIn, sandboxOut) {
   if (error) {
