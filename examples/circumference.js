@@ -10,32 +10,32 @@ var
 // system, etc. they do have access to standard JavaScript as implemented by V8.
 // This includes built-in objects like Object, String, Array, Math, etc.
 
-// If we provided an invalid script (e.g. syntax error), this `addScript` call
+// If we provided an invalid script (e.g. syntax error), this `compile` call
 // would throw.
 
 try {
-  elJefe.addScript(scriptName, "C = 2 * Math.PI * R");
+  elJefe.compile(scriptName, "C = 2 * Math.PI * R");
 } catch (e) {
-  sys.puts("Error adding script: " + e);
+  sys.puts("problem compiling script: " + e);
   process.exit(1);
 }
 
-// If we provided an invalid script (e.g. syntax error), this `addScript` call
+// If we provided an invalid script (e.g. syntax error), this `compile` call
 // would throw, like this:
 
 try {
-  elJefe.addScript(scriptName, "C = 2 * ; Math.PI * R");
+  elJefe.compile(scriptName, "C = 2 * ; Math.PI * R");
 } catch (e) {                        // ^-- oops!
-  sys.puts("Error adding script: " + e);
-  sys.puts("It's OK. We were expecting that.");
+  sys.puts("problem compiling script: " + e);
+  sys.puts("It's OK! We were expecting that.");
 }
 
 
-// BTW, adding a script with the same name will replace any existing script with
+// BTW, compiling a script with the same name will replace any existing script with
 // that name in Jefe.
 
 
-// With the script added, let us run it N times, each with a distinct
+// With the script compiled, let us run it N times, each with a distinct
 // sandbox.  Since an untrusted script only has r/w access to the the sandbox
 // we give it, we have a simple way of "passing" arguments and "returning"
 // results.  To pass a parameter, set a value in the sandbox.  *Be careful what
@@ -46,7 +46,7 @@ try {
 
 var nDone = 0;
 for (var i = 0; i < 10; ++i) {
-  elJefe.runScript(scriptName, { R:i+1 }, function (error, sandboxIn, sandboxOut) {
+  elJefe.run(scriptName, { R:i+1 }, function (error, sandboxIn, sandboxOut) {
 
     // If there's a problem with Jefe (bug; someone else killed the child
     // process from the outside; etc.) then `error` will be a message
