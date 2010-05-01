@@ -1,0 +1,20 @@
+{
+  "name": "jefe",
+  "description": "A sandbox for running user scripts in Node.js",
+  "version": "0.1.0",
+  "keywords": [ "security", "node", "sandbox" ],
+  "author": "Brian Hammond <brian@fictorial.com>",
+  "contributors": [
+    { "name": "Brian Hammond", "web": "http://fictorial.com" },
+  ],
+  "licenses": [ "MIT" ],
+  "repositories": {
+    "type": "git",
+    "url": "http://github.com/fictorial/jefe.git"
+  },
+  "bugs": { "web": "http://github.com/fictorial/jefe/issues" },
+  "directories": { "lib": "./lib" },
+  "os": [ "linux", "darwin" ],
+  "dependencies": {},
+  "engines": { "node":  ">0.1.90" }
+}

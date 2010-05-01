@@ -1,0 +1,6 @@
+---
+  name: jefe
+  description: a sandbox for running user scripts
+  tags: security, sandbox
+  version: 0.1.0
+
