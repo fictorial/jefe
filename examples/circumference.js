@@ -72,7 +72,7 @@ function finalize() {
   // You can fetch statistics about the runs for each script.
 
   var stats = elJefe.getScriptStats(scriptName);
-  sys.p(stats);
+  sys.puts(sys.inspect(stats));
 
   var meanElapsed = stats.totalRunTime / (stats.runs || 1);
   sys.puts("mean elapsed time per run of '" + scriptName + "' was " + meanElapsed + " ms");
