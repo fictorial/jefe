@@ -13,7 +13,12 @@ for (var i = 0; i < runs; i++) {
   elJefe.run(scriptName, {}, function (error, sandboxIn, sandboxOut) {
     if (error) sys.puts("error = " + error);
     if (++completed == runs) {
-      sys.puts('SUCCESS: completed ' + runs + ' jobs in ' + (new Date() - timestamp) / 1000 + 's');
+      sys.puts('SUCCESS: completed '+runs+' jobs in '+
+        (new Date()-timestamp)/1000 + 's');
+        
+      Object.keys(elJefe.childHandlers).forEach(function(each) {
+          sys.puts(elJefe.childHandlers[each].toString()) });
+      sys.puts('Pool size: ' + elJefe.pool.size());
       process.exit(0);
     }
   })
