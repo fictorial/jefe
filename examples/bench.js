@@ -21,4 +21,4 @@ for (var i = 0; i < runs; i++) {
 setTimeout(function() {
   sys.puts('FAIL: Timeout reached. Incomplete jobs: ' + (runs - completed));
   process.exit(1);
-}, 2000)
+}, 3000)
