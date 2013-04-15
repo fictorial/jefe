@@ -17,8 +17,7 @@ elJefe.run(scriptName, {}, function (error, sandboxIn, sandboxOut) {
   }
 
   var stats = elJefe.getScriptStats(scriptName);
-  sys.p(stats);
+  sys.puts(sys.inspect(stats));
 
   process.exit(0);
 });
-
